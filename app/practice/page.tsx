@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import * as tf from '@tensorflow/tfjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,7 @@ import { SakuraDecoration } from '@/components/SakuraDecoration';
 import { hiraganaCharacters, katakanaCharacters, Character } from '@/data/characters';
 
 export default function Practice() {
+  const [model, setModel] = useState<tf.GraphModel | null>(null);
   const [scriptType, setScriptType] = useState<'hiragana' | 'katakana'>('hiragana');
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -22,6 +24,60 @@ export default function Practice() {
 
   const characters = scriptType === 'hiragana' ? hiraganaCharacters : katakanaCharacters;
   const currentChar = characters[currentCharIndex];
+
+  // 1. Load Model saat komponen pertama kali mounting
+  useEffect(() => {
+    async function load() {
+      const loadedModel = await tf.loadGraphModel('/tfjs_model/model.json');
+      setModel(loadedModel as tf.GraphModel);
+    }
+    load();
+  }, []);
+
+  // Inisialisasi Canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (ctx) {
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = '#000000';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // Background putih
+        setContext(ctx);
+      }
+    }
+  }, []);
+
+  // 2. Fungsi Prediksi
+  const checkWriting = async () => {
+    if (!model || !canvasRef.current) return;
+
+    // Preprocessing: Ambil data canvas
+    const imgData = tf.browser.fromPixels(canvasRef.current, 1); // Greyscale
+    const resized = tf.image.resizeBilinear(imgData, [28, 28]); // Sesuaikan ukuran input model Anda
+    const normalized = resized.div(255.0).expandDims(0);
+
+    // Prediksi
+    const prediction = model.predict(normalized) as tf.Tensor;
+    const resultIndex = prediction.argMax(-1).dataSync()[0];
+
+    // Logika verifikasi
+    // Asumsi: Anda membandingkan indeks hasil model dengan karakter saat ini
+    const isCorrect = characters[currentCharIndex].id === `h${resultIndex + 1}`; // Sesuaikan logika ID Anda
+
+    setFeedback(isCorrect ? 'correct' : 'incorrect');
+    setAccuracy(isCorrect ? 95 : 60); // Mock score jika tidak pakai confidence score model
+    if (isCorrect) setXpEarned(prev => prev + 15);
+
+    // Bersihkan tensor dari memori
+    imgData.dispose();
+    resized.dispose();
+    normalized.dispose();
+    prediction.dispose();
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -64,21 +120,9 @@ export default function Practice() {
 
   const clearCanvas = () => {
     if (!context || !canvasRef.current) return;
-    context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    context.fillStyle = '#FFFFFF';
+    context.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     setFeedback(null);
-  };
-
-  const checkWriting = () => {
-    // Simulate checking (in a real app, you'd use AI/ML to verify the drawing)
-    const accuracyScore = Math.floor(Math.random() * 30) + 70; // 70-100%
-    setAccuracy(accuracyScore);
-    const isCorrect = accuracyScore > 75;
-    setFeedback(isCorrect ? 'correct' : 'incorrect');
-
-    if (isCorrect) {
-      const earnedXP = accuracyScore > 90 ? 25 : 15;
-      setXpEarned(xpEarned + earnedXP);
-    }
   };
 
   const nextCharacter = () => {
@@ -164,11 +208,10 @@ export default function Practice() {
               </div>
 
               {feedback && (
-                <div className={`p-4 rounded-xl text-center ${
-                  feedback === 'correct'
-                    ? 'bg-green-100 text-green-800 border-2 border-green-200'
-                    : 'bg-red-100 text-red-800 border-2 border-red-200'
-                }`}>
+                <div className={`p-4 rounded-xl text-center ${feedback === 'correct'
+                  ? 'bg-green-100 text-green-800 border-2 border-green-200'
+                  : 'bg-red-100 text-red-800 border-2 border-red-200'
+                  }`}>
                   <div className="flex items-center justify-center gap-2 mb-2">
                     {feedback === 'correct' ? (
                       <CheckCircle className="w-5 h-5" />
