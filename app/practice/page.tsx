@@ -213,7 +213,7 @@ export default function Practice() {
                   ref={canvasRef}
                   width={300}
                   height={300}
-                  className="w-full max-w-sm mx-auto border border-gray-200 rounded-lg cursor-crosshair bg-white"
+                  className="w-full max-w-sm mx-auto border border-gray-200 rounded-lg cursor-crosshair bg-white touch-none"
                   onMouseDown={startDrawing}
                   onMouseMove={draw}
                   onMouseUp={stopDrawing}
