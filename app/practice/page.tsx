@@ -25,6 +25,31 @@ export default function Practice() {
   const characters = scriptType === 'hiragana' ? hiraganaCharacters : katakanaCharacters;
   const currentChar = characters[currentCharIndex];
 
+  const getTouchPos = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 0, y: 0 };
+    return {
+      x: e.touches[0].clientX - rect.left,
+      y: e.touches[0].clientY - rect.top,
+    };
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!context) return;
+    setIsDrawing(true);
+    const { x, y } = getTouchPos(e);
+    context.beginPath();
+    context.moveTo(x, y);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing || !context) return;
+    e.preventDefault(); // Mencegah scrolling halaman saat menggambar
+    const { x, y } = getTouchPos(e);
+    context.lineTo(x, y);
+    context.stroke();
+  };
+
   // 1. Load Model saat komponen pertama kali mounting
   useEffect(() => {
     async function load() {
@@ -193,6 +218,10 @@ export default function Practice() {
                   onMouseMove={draw}
                   onMouseUp={stopDrawing}
                   onMouseLeave={stopDrawing}
+
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={stopDrawing}
                 />
               </div>
 
