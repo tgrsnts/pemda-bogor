@@ -45,8 +45,8 @@ export default function Library() {
             <BookOpen className="w-6 h-6 md:w-8 md:h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-4xl mb-1">Character Library 📚</h1>
-            <p className="text-sm md:text-base text-muted-foreground">Complete reference guide for Japanese characters</p>
+            <h1 className="text-2xl md:text-4xl mb-1">Kamus</h1>
+            <p className="text-sm md:text-base text-muted-foreground">Kamus karakter Jepang</p>
           </div>
         </div>
       </div>

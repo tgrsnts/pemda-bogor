@@ -3,8 +3,8 @@ import AppLayout from './AppLayout';
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "日本語 Learning App",
-  description: "Master Japanese characters with interactive learning",
+  title: "Yumekana",
+  description: "Kuasai Hiragana dan Katakana dengan YumeKana! Latih kemampuan bahasa Jepangmu melalui",
 };
 
 export default function RootLayout({

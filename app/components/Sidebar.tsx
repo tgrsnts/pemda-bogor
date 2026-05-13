@@ -14,12 +14,12 @@ import {
 import { useState } from 'react';
 
 const navItems = [
-  { href: '/dashboard', icon: Home, label: 'Dashboard' },
-  { href: '/practice-select', icon: PenTool, label: 'Practice' },
-  { href: '/scanner', icon: ScanLine, label: 'Scanner' },
-  { href: '/quiz-select', icon: Brain, label: 'Quiz' },
-  { href: '/library', icon: BookOpen, label: 'Library' },
-  { href: '/profile', icon: User, label: 'Profile' },
+  // { href: '/dashboard', icon: Home, label: 'Dashboard' },
+  { href: '/latihan', icon: PenTool, label: 'Latihan' },
+  { href: '/pindai', icon: ScanLine, label: 'Pindai' },
+  { href: '/kuis', icon: Brain, label: 'Kuis' },
+  { href: '/kamus', icon: BookOpen, label: 'Kamus' },
+  // { href: '/profile', icon: User, label: 'Profile' },
 ];
 
 export function Sidebar() {
@@ -47,8 +47,8 @@ export function Sidebar() {
           <div className="flex items-center gap-3">
             <div className="text-3xl md:text-4xl">🏯</div>
             <div>
-              <h1 className="text-primary text-lg md:text-xl">日本語</h1>
-              <p className="text-xs text-muted-foreground">Japanese Learning</p>
+              <h1 className="text-primary text-lg md:text-xl">YumeKana</h1>
+              <p className="text-xs text-muted-foreground">Hiragana & Katakana</p>
             </div>
           </div>
         </div>
@@ -76,8 +76,8 @@ export function Sidebar() {
         <div className="p-3 md:p-4 border-t border-sidebar-border">
           <div className="bg-gradient-to-r from-primary to-pink-400 rounded-xl p-3 md:p-4 text-white text-center">
             <div className="text-xl md:text-2xl mb-2">🎌</div>
-            <p className="text-xs md:text-sm mb-1">Keep Learning!</p>
-            <p className="text-xs opacity-90">Master all 96 characters</p>
+            <p className="text-xs md:text-sm mb-1">Tetap Belajar!</p>
+            <p className="text-xs opacity-90">Kuasai semua 96 karakter</p>
           </div>
         </div>
       </aside>

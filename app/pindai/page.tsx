@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Camera, Upload, Zap, Target } from 'lucide-react';
+import { Camera, Upload, Zap, Target, Scan, ScanLine } from 'lucide-react';
 import { SakuraDecoration } from '@/components/SakuraDecoration';
 
 const hiraganaCharacters = [
@@ -68,25 +68,25 @@ export default function Scanner() {
     <div className="p-4 md:p-8 relative">
       <SakuraDecoration />
 
+      {/* Header */}
       <div className="mb-6 md:mb-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-4xl mb-2">Character Scanner 📸</h1>
-            <p className="text-sm md:text-base text-muted-foreground">AI-powered handwriting recognition</p>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-primary to-pink-400 rounded-2xl flex items-center justify-center shadow-lg">
+            <ScanLine className="w-6 h-6 md:w-8 md:h-8 text-white" />
           </div>
-          <div className="flex items-center gap-2 bg-gradient-to-r from-accent to-yellow-300 px-4 md:px-6 py-3 rounded-2xl shadow-lg">
-            <Zap className="w-5 h-5 text-navy" />
-            <span className="text-xl md:text-2xl font-bold text-navy">+{xpEarned} XP</span>
+          <div>
+             <h1 className="text-2xl md:text-4xl mb-2">Pemindai Karakter</h1>
+            <p className="text-sm md:text-base text-muted-foreground">Coba masukan tulisan tanganmu!</p>
           </div>
         </div>
-      </div>
+      </div>     
 
       <div className={`grid grid-cols-1 ${uploadedImage ? 'lg:grid-cols-2' : ''} gap-4 md:gap-6`}>
         {/* Upload Area */}
-        <Card className={`shadow-2xl border-2 border-primary/20 ${!uploadedImage ? 'max-w-2xl mx-auto' : ''}`}>
+        <Card className={`shadow-2xl border-2 border-primary/20 ${!uploadedImage ? 'max-w-2xl mx-auto' : ''} overflow-hidden`}>
           <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50">
-            <CardTitle className="text-lg md:text-xl">Upload Image</CardTitle>
-            <CardDescription className="text-sm">Scan handwritten Hiragana or Katakana</CardDescription>
+            <CardTitle className="text-lg md:text-xl">Unggah Gambar</CardTitle>
+            <CardDescription className="text-sm">Pindai tulisan tanganmu!</CardDescription>
           </CardHeader>
           <CardContent className="p-4 md:p-6">
             <div className="space-y-4">
@@ -94,8 +94,8 @@ export default function Scanner() {
                 <div className="border-4 border-dashed border-secondary rounded-2xl p-8 md:p-16 text-center bg-gradient-to-br from-pink-50 to-purple-50 hover:border-primary transition-colors cursor-pointer">
                   <Camera className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 text-primary" />
                   <div className="space-y-2">
-                    <p className="text-lg font-medium">Drop your image here</p>
-                    <p className="text-sm text-muted-foreground">or click to browse</p>
+                    <p className="text-lg font-medium">Jatuhkan gambar di sini</p>
+                    <p className="text-sm text-muted-foreground">atau klik Pilih File</p>
                   </div>
                   <input
                     id="file-upload"
@@ -107,7 +107,7 @@ export default function Scanner() {
                   <label htmlFor="file-upload">
                     <Button className="mt-4" variant="outline">
                       <Upload className="w-4 h-4 mr-2" />
-                      Choose File
+                      Pilih File
                     </Button>
                   </label>
                 </div>
@@ -123,13 +123,13 @@ export default function Scanner() {
                       <div className="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center">
                         <div className="text-center text-white">
                           <div className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full mx-auto mb-2"></div>
-                          <p className="text-sm">Scanning...</p>
+                          <p className="text-sm">Memindai...</p>
                         </div>
                       </div>
                     )}
                   </div>
                   <Button onClick={handleScanAnother} variant="outline" className="w-full">
-                    Scan Another Image
+                    Pindai Lagi
                   </Button>
                 </div>
               )}
@@ -137,13 +137,12 @@ export default function Scanner() {
               <div className="bg-gradient-to-r from-blue-100 to-cyan-100 border-2 border-blue-300 rounded-2xl p-4 md:p-5">
                 <h4 className="font-medium mb-2 flex items-center gap-2">
                   <Target className="w-4 h-4" />
-                  How it works
+                  Bagaimana cara kerjanya?
                 </h4>
                 <ul className="text-sm space-y-1 text-blue-800">
-                  <li>• Upload a clear image of handwritten Japanese characters</li>
-                  <li>• Our AI analyzes the strokes and identifies the character</li>
-                  <li>• Get instant feedback with pronunciation and examples</li>
-                  <li>• Earn XP for each successful scan!</li>
+                  <li>• Unggah gambar jelas dari karakter Jepang yang ditulis tangan</li>
+                  <li>• AI kami menganalisis garis-garisnya dan mengidentifikasi karakternya</li>
+                  <li>• Dapatkan umpan balik instan dengan pelafalan dan contoh</li>           
                 </ul>
               </div>
             </div>
@@ -154,9 +153,9 @@ export default function Scanner() {
         {uploadedImage && (
           <Card className="shadow-2xl border-2 border-secondary/30">
             <CardHeader className="bg-gradient-to-r from-pink-50 to-purple-50">
-              <CardTitle className="text-lg md:text-xl">Scan Result</CardTitle>
+              <CardTitle className="text-lg md:text-xl">Hasil Pindai</CardTitle>
               <CardDescription className="text-sm">
-                {scannedResult ? `Detected: ${scannedResult.type} character` : 'Processing your image...'}
+                {scannedResult ? `Detected: ${scannedResult.type} character` : 'Memproses gambar Anda...'}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 md:p-6">
@@ -189,7 +188,7 @@ export default function Scanner() {
                     </div>
 
                     <div className="bg-blue-50 rounded-xl p-4">
-                      <h4 className="font-medium mb-2 text-blue-900">Example Usage</h4>
+                      <h4 className="font-medium mb-2 text-blue-900">Contoh Penggunaan</h4>
                       <div className="text-sm">
                         <div className="font-medium text-blue-800">{scannedResult.example}</div>
                         <div className="text-blue-600">"{scannedResult.exampleMeaning}"</div>
@@ -201,7 +200,7 @@ export default function Scanner() {
                   <div className="bg-gradient-to-r from-accent to-yellow-300 rounded-xl p-4 text-center">
                     <Zap className="w-6 h-6 mx-auto mb-2 text-navy" />
                     <div className="text-lg font-bold text-navy">+10 XP Earned!</div>
-                    <div className="text-sm text-navy/80">Great job scanning this character</div>
+                    <div className="text-sm text-navy/80">Kerja bagus memindai karakter ini</div>
                   </div>
                 </div>
               ) : (
@@ -211,7 +210,7 @@ export default function Scanner() {
                     <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
                     <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
                   </div>
-                  <p className="text-muted-foreground mt-4">Analyzing your handwriting...</p>
+                  <p className="text-muted-foreground mt-4">Memproses tulisan tangan Anda...</p>
                 </div>
               )}
             </CardContent>

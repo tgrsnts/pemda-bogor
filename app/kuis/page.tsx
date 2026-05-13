@@ -18,39 +18,39 @@ export default function QuizSelection() {
   const quizTypes = [
     {
       id: 'character-to-romaji',
-      title: 'Character → Romaji',
-      description: 'See character, choose romaji',
+      title: 'Karakter → Romaji',
+      description: 'Lihat karakter, pilih romaji',
       icon: '🔤',
       example: 'あ → a',
       color: 'from-blue-400 to-cyan-400',
-      xp: '+10 XP per correct',
+      xp: '+10 XP per jawaban benar',
     },
     {
       id: 'romaji-to-character',
-      title: 'Romaji → Character',
-      description: 'See romaji, choose character',
+      title: 'Romaji → Karakter',
+      description: 'Lihat romaji, pilih karakter',
       icon: '🔠',
       example: 'ka → か',
       color: 'from-purple-400 to-pink-400',
-      xp: '+15 XP per correct',
+      xp: '+15 XP per jawaban benar',
     },
     {
       id: 'mixed-challenge',
-      title: 'Mixed Challenge',
-      description: 'Random combination of questions',
+      title: 'Tantangan Campuran',
+      description: 'Kombinasi acak dari berbagai jenis soal',
       icon: '🎯',
-      example: 'All question types',
+      example: 'Semua jenis soal',
       color: 'from-orange-400 to-red-400',
-      xp: '+20 XP per correct',
+      xp: '+20 XP per jawaban benar',
     },
     {
       id: 'speed-challenge',
-      title: 'Speed Challenge',
-      description: 'Quick-fire questions with timer',
+      title: 'Tantangan Kecepatan',
+      description: 'Soal kilat dengan batas waktu',
       icon: '⚡',
-      example: '10 seconds per question',
+      example: '10 detik per soal',
       color: 'from-yellow-400 to-amber-400',
-      xp: '+25 XP + time bonus',
+      xp: '+25 XP + bonus waktu',
     },
   ];
 
@@ -69,45 +69,16 @@ export default function QuizSelection() {
     },
     {
       id: 'mixed',
-      title: 'Mixed',
-      subtitle: 'Both',
+      title: 'Campuran',
+      subtitle: 'Keduanya',
       icon: '🎌',
     },
   ];
 
-  const difficultyOptions = [
-    {
-      id: 'easy',
-      title: 'Easy',
-      questions: '10 questions',
-      time: '30s per question',
-      icon: Target,
-      color: 'bg-green-100 border-green-500',
-      xp: '10 XP per question',
-    },
-    {
-      id: 'medium',
-      title: 'Medium',
-      questions: '15 questions',
-      time: '20s per question',
-      icon: Zap,
-      color: 'bg-blue-100 border-blue-500',
-      xp: '15 XP per question',
-    },
-    {
-      id: 'hard',
-      title: 'Hard',
-      questions: '20 questions',
-      time: '15s per question',
-      icon: Trophy,
-      color: 'bg-orange-100 border-orange-500',
-      xp: '20 XP per question',
-    },
-  ];
 
   const handleStart = () => {
-    if (selectedQuizType && selectedScript && selectedDifficulty) {
-      router.push(`/quiz?type=${selectedQuizType}&script=${selectedScript}&difficulty=${selectedDifficulty}`);
+    if (selectedQuizType && selectedScript) {
+      router.push(`/quiz?type=${selectedQuizType}&script=${selectedScript}`);
     }
   };
 
@@ -122,8 +93,8 @@ export default function QuizSelection() {
             <Brain className="w-6 h-6 md:w-8 md:h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-4xl mb-1">Quiz Setup</h1>
-            <p className="text-sm md:text-base text-muted-foreground">Configure your quiz challenge</p>
+            <h1 className="text-2xl md:text-4xl mb-1">Latihan Menebak Huruf</h1>
+            <p className="text-sm md:text-base text-muted-foreground">Pilih jenis latihan yang ingin Anda lakukan</p>
           </div>
         </div>
       </div>
@@ -135,7 +106,7 @@ export default function QuizSelection() {
             <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold">
               1
             </div>
-            <h2 className="text-xl md:text-2xl">Choose Quiz Type</h2>
+            <h2 className="text-xl md:text-2xl">Pilih Jenis Latihan</h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -172,7 +143,7 @@ export default function QuizSelection() {
               <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold">
                 2
               </div>
-              <h2 className="text-xl md:text-2xl">Choose Script</h2>
+              <h2 className="text-xl md:text-2xl">Pilih Huruf</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -196,78 +167,23 @@ export default function QuizSelection() {
             </div>
           </div>
         )}
-
-        {/* Step 3: Choose Difficulty */}
-        {selectedQuizType && selectedScript && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold">
-                3
-              </div>
-              <h2 className="text-xl md:text-2xl">Choose Difficulty</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {difficultyOptions.map((difficulty) => {
-                const Icon = difficulty.icon;
-                return (
-                  <Card
-                    key={difficulty.id}
-                    className={`cursor-pointer transition-all hover:shadow-xl border-2 ${
-                      selectedDifficulty === difficulty.id
-                        ? `${difficulty.color} shadow-lg`
-                        : 'border-transparent hover:border-secondary/50'
-                    }`}
-                    onClick={() => setSelectedDifficulty(difficulty.id)}
-                  >
-                    <CardHeader className={`bg-gradient-to-br ${difficulty.color} rounded-t-xl`}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                          <Icon className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <CardTitle className="text-white text-lg">{difficulty.title}</CardTitle>
-                          <CardDescription className="text-white/80 text-sm">
-                            {difficulty.xp}
-                          </CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-4">
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span>Questions:</span>
-                          <span className="font-medium">{difficulty.questions}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Time limit:</span>
-                          <span className="font-medium">{difficulty.time}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
+        
         {/* Start Button */}
-        {selectedQuizType && selectedScript && selectedDifficulty && (
+        {selectedQuizType && selectedScript && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className="bg-gradient-to-r from-primary to-pink-500 border-0 shadow-2xl">
               <CardContent className="p-8 text-center">
                 <div className="text-3xl mb-4">🎯</div>
-                <h3 className="text-2xl font-bold text-white mb-2">Ready for Quiz!</h3>
+                <h3 className="text-2xl font-bold text-white mb-2">Siap untuk Latihan!</h3>
                 <p className="text-white/90 mb-6">
-                  Start your {selectedScript} {selectedQuizType} quiz at {selectedDifficulty} difficulty
+                  Mulai latihan anda sekarang
                 </p>
                 <Button
                   onClick={handleStart}
                   size="lg"
                   className="bg-white text-primary hover:bg-gray-50 px-8 py-3 text-lg font-bold rounded-xl shadow-lg"
                 >
-                  Start Quiz
+                  Mulai Latihan
                 </Button>
               </CardContent>
             </Card>

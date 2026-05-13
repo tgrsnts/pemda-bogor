@@ -46,19 +46,18 @@ export default function Landing() {
         <div className="text-center mb-12 md:mb-20">
           <div className="inline-block mb-6 md:mb-8">
             <div className="relative">
-              <div className="relative text-4xl md:text-7xl text-primary mb-4 font-bold">日本語</div>
+              <div className="relative text-4xl md:text-7xl text-primary mb-4 font-bold">YumeKana (夢かな)</div>
             </div>
             <h1 className="text-3xl md:text-6xl mb-4 md:mb-6 bg-gradient-to-r from-primary to-pink-500 bg-clip-text text-transparent px-4">
-              Master Japanese Characters
+              Belajar Hiragana & Katakana
             </h1>
             <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-10 max-w-3xl mx-auto px-4">
-              Learn Hiragana and Katakana through interactive writing practice, AI-powered scanning,
-              and gamified quizzes. Earn XP, unlock achievements, and compete on leaderboards!
+             Selamat datang di YumeKana! Latih kemampuan bahasa Jepangmu melalui quiz kana, latihan menulis, scanner huruf Jepang, serta library modern yang dirancang untuk membantu proses belajar menjadi lebih mudah dipahami. Mulailah langkah kecilmu hari ini dan wujudkan mimpi untuk belajar bahasa Jepang bersama YumeKana.
             </p>
             <div className="flex gap-3 md:gap-4 justify-center flex-wrap px-4">
-              <Link href="/auth">
-                <Button size="lg" className="px-6 md:px-8 py-3 text-base md:text-lg">
-                  Start Learning
+              <Link href="/dashboard">
+                <Button size="lg" className="px-6 md:px-8 py-3 text-base md:text-lg hover:cursor-pointer">
+                  Mulai Belajar
                 </Button>
               </Link>
               <Link href="/library">

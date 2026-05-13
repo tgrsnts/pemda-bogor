@@ -92,8 +92,8 @@ export default function Practice() {
 
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="mb-2">Writing Practice ✍️</h1>
-          <p className="text-muted-foreground">Master the art of Japanese writing</p>
+          <h1 className="mb-2">Latihan Menulis</h1>
+          <p className="text-muted-foreground">Kuasai menulis karakter Hiragana dan Katakana dengan Yumekana!</p>
         </div>
         <div className="flex items-center gap-2 bg-gradient-to-r from-accent to-yellow-300 px-6 py-3 rounded-2xl shadow-lg">
           <Zap className="w-5 h-5 text-navy" />
@@ -112,8 +112,8 @@ export default function Practice() {
         {/* Character Display */}
         <Card className="shadow-2xl border-2 border-secondary/30">
           <CardHeader className="bg-gradient-to-r from-pink-50 to-purple-50">
-            <CardTitle>Current Character</CardTitle>
-            <CardDescription>Study the character before practicing</CardDescription>
+            <CardTitle>Karakter Saat Ini</CardTitle>
+            <CardDescription>Belajar menulis karakter</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-8">
@@ -124,7 +124,7 @@ export default function Practice() {
                 <div className="text-xl font-bold text-primary">{currentChar.romaji}</div>
                 <Badge variant="secondary">{scriptType}</Badge>
                 <div className="text-sm text-muted-foreground mt-2">
-                  Example: {currentChar.example} ({currentChar.exampleMeaning})
+                  Contoh: {currentChar.example} ({currentChar.exampleMeaning})
                 </div>
               </div>
             </div>
@@ -134,8 +134,8 @@ export default function Practice() {
         {/* Drawing Canvas */}
         <Card className="shadow-2xl border-2 border-primary/20">
           <CardHeader className="bg-gradient-to-r from-primary/5 to-pink-50">
-            <CardTitle>Practice Area</CardTitle>
-            <CardDescription>Draw the character using proper stroke order</CardDescription>
+            <CardTitle>Area Latihan</CardTitle>
+            <CardDescription>Tulis karakter dengan benar</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -154,12 +154,12 @@ export default function Practice() {
 
               <div className="flex gap-2">
                 <Button onClick={clearCanvas} variant="outline" className="flex-1">
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Clear
+                  <RotateCcw className="w-4 h-4 mr-2 hover:cursor-pointer" />
+                  Bersihkan
                 </Button>
-                <Button onClick={checkWriting} className="flex-1">
+                <Button onClick={checkWriting} className="flex-1 hover:cursor-pointer">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  Check
+                  Periksa
                 </Button>
               </div>
 
@@ -176,17 +176,17 @@ export default function Practice() {
                       <XCircle className="w-5 h-5" />
                     )}
                     <span className="font-bold">
-                      {feedback === 'correct' ? 'Great job!' : 'Try again!'}
+                      {feedback === 'correct' ? 'Bagus!' : 'Coba lagi!'}
                     </span>
                   </div>
                   <div className="text-sm">
-                    Accuracy: {accuracy}% | XP Earned: +{feedback === 'correct' ? (accuracy > 90 ? 25 : 15) : 0}
+                    Akurasi: {accuracy}% | XP Earned: +{feedback === 'correct' ? (accuracy > 90 ? 25 : 15) : 0}
                   </div>
                 </div>
               )}
 
-              <Button onClick={nextCharacter} variant="secondary" className="w-full">
-                Next Character
+              <Button onClick={nextCharacter} variant="secondary" className="w-full hover:cursor-pointer">
+                Karakter Selanjutnya
               </Button>
             </div>
           </CardContent>
