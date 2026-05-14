@@ -116,7 +116,8 @@ export default function Practice() {
     const isCorrect = characters[currentCharIndex].id === `h${resultIndex + 1}`; // Sesuaikan logika ID Anda
 
     setFeedback(isCorrect ? 'correct' : 'incorrect');
-    setAccuracy(isCorrect ? 95 : 60); // Mock score jika tidak pakai confidence score model
+    const score = await prediction.max().data(); // Mengambil nilai confidence tertinggi
+    setAccuracy(Math.round(score[0] * 100));
     if (isCorrect) setXpEarned(prev => prev + 15);
 
     // Bersihkan tensor dari memori
