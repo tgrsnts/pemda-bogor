@@ -81,22 +81,50 @@ export default function Practice() {
     load();
   }, []);
 
-  // Inisialisasi Canvas
+
+  // Fungsi untuk menggambar panduan karakter (tracing)
+  const drawGuide = (character: string) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    // Bersihkan canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Isi background putih
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Gambar karakter panduan di tengah canvas
+    ctx.save();
+    ctx.globalAlpha = 0.25; // Opacity rendah
+    ctx.fillStyle = '#E5E7EB'; // Abu-abu muda
+    // Ukuran font responsif terhadap canvas
+    const fontSize = Math.floor(canvas.width * 0.7);
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(character, canvas.width / 2, canvas.height / 2);
+    ctx.restore();
+  };
+
+  // Inisialisasi Canvas & render panduan setiap currentCharIndex/scriptType berubah
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
       if (ctx) {
+        // Reset context
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.lineWidth = 12;
         ctx.strokeStyle = '#000000';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, canvas.width, canvas.height); // Background putih
         setContext(ctx);
       }
+      drawGuide(currentChar.character);
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCharIndex, scriptType]);
 
   // 2. Fungsi Prediksi
   const checkWriting = async () => {
@@ -146,22 +174,13 @@ export default function Practice() {
     prediction.dispose();
   };
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.lineWidth = 6;
-        ctx.strokeStyle = '#1D3557';
-        setContext(ctx);
-      }
-    }
-  }, []);
+  // Tidak perlu useEffect ini lagi, sudah di-handle di atas
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!context) return;
+    // Pastikan goresan di atas panduan
+    context.globalAlpha = 1;
+    context.globalCompositeOperation = 'source-over';
     setIsDrawing(true);
     const rect = canvasRef.current?.getBoundingClientRect();
     if (rect) {
@@ -172,7 +191,8 @@ export default function Practice() {
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing || !context) return;
-
+    context.globalAlpha = 1;
+    context.globalCompositeOperation = 'source-over';
     const { x, y } = getMousePos(e); // Gunakan fungsi perhitungan skala
     context.lineTo(x, y);
     context.stroke();
@@ -185,9 +205,8 @@ export default function Practice() {
   };
 
   const clearCanvas = () => {
-    if (!context || !canvasRef.current) return;
-    context.fillStyle = '#FFFFFF';
-    context.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    if (!canvasRef.current) return;
+    drawGuide(currentChar.character);
     setFeedback(null);
   };
 
