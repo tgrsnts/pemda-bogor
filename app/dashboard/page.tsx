@@ -22,7 +22,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-8 relative">
+    <div className="p-4 md:p-8 relative">
       <SakuraDecoration />
       
       {/* Welcome Header */}

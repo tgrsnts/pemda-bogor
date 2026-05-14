@@ -52,7 +52,7 @@ export default function PracticeSelection() {
   };
 
   return (
-    <div className="p-4 md:p-8 relative min-h-screen">
+    <div className="p-4 md:p-4 md:p-8 relative min-h-screen">
       <SakuraDecoration />
 
       {/* Header */}

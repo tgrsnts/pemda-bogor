@@ -17,7 +17,6 @@ export default function Practice() {
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [xpEarned, setXpEarned] = useState(0);
   const [accuracy, setAccuracy] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -90,7 +89,7 @@ export default function Practice() {
       if (ctx) {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 12;
         ctx.strokeStyle = '#000000';
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height); // Background putih
@@ -139,8 +138,6 @@ export default function Practice() {
     } else {
       setAccuracy(Math.round(confidenceScore * 100));
     }
-
-    if (isCorrect) setXpEarned(prev => prev + 15);
 
     // Bersihkan tensor dari memori
     imgData.dispose();
@@ -203,31 +200,32 @@ export default function Practice() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const preventDefault = (e: TouchEvent) => e.preventDefault();
+    const handlePrevent = (e: TouchEvent) => {
+      // Mencegah scroll layar saat menggambar
+      if (e.target === canvas) {
+        e.preventDefault();
+      }
+    };
 
-    // Memaksa listener menjadi TIDAK passive
-    canvas.addEventListener('touchstart', preventDefault, { passive: false });
-    canvas.addEventListener('touchmove', preventDefault, { passive: false });
+    // Tambahkan listener secara manual dengan passive: false
+    canvas.addEventListener('touchstart', handlePrevent, { passive: false });
+    canvas.addEventListener('touchmove', handlePrevent, { passive: false });
 
     return () => {
-      canvas.removeEventListener('touchstart', preventDefault);
-      canvas.removeEventListener('touchmove', preventDefault);
+      canvas.removeEventListener('touchstart', handlePrevent);
+      canvas.removeEventListener('touchmove', handlePrevent);
     };
   }, []);
 
   return (
-    <div className="p-8 relative">
+    <div className="p-4 md:p-8 relative">
       <SakuraDecoration />
 
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="mb-2">Latihan Menulis</h1>
           <p className="text-muted-foreground">Kuasai menulis karakter Hiragana dan Katakana dengan Yumekana!</p>
-        </div>
-        <div className="flex items-center gap-2 bg-gradient-to-r from-accent to-yellow-300 px-6 py-3 rounded-2xl shadow-lg">
-          <Zap className="w-5 h-5 text-navy" />
-          <span className="text-2xl font-bold text-navy">+{xpEarned} XP</span>
-        </div>
+        </div>        
       </div>
 
       <Tabs value={scriptType} onValueChange={(v) => setScriptType(v as 'hiragana' | 'katakana')} className="mb-6">
@@ -313,7 +311,7 @@ export default function Practice() {
                     </span>
                   </div>
                   <div className="text-sm">
-                    Akurasi: {accuracy}% | XP Earned: +{feedback === 'correct' ? (accuracy > 90 ? 25 : 15) : 0}
+                    Akurasi: {accuracy}%
                   </div>
                 </div>
               )}

@@ -65,7 +65,7 @@ export default function Scanner() {
   };
 
   return (
-    <div className="p-4 md:p-8 relative">
+    <div className="p-4 md:p-4 md:p-8 relative">
       <SakuraDecoration />
 
       {/* Header */}
