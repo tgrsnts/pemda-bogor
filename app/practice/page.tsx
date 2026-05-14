@@ -25,12 +25,34 @@ export default function Practice() {
   const characters = scriptType === 'hiragana' ? hiraganaCharacters : katakanaCharacters;
   const currentChar = characters[currentCharIndex];
 
-  const getTouchPos = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return { x: 0, y: 0 };
+  const getMousePos = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+
+    const rect = canvas.getBoundingClientRect();
+
+    // Hitung rasio antara ukuran fisik (CSS) dan ukuran resolusi canvas
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
     return {
-      x: e.touches[0].clientX - rect.left,
-      y: e.touches[0].clientY - rect.top,
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    };
+  };
+
+  // Terapkan hal yang sama untuk getTouchPos
+  const getTouchPos = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    return {
+      x: (e.touches[0].clientX - rect.left) * scaleX,
+      y: (e.touches[0].clientY - rect.top) * scaleY,
     };
   };
 
@@ -130,11 +152,10 @@ export default function Practice() {
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing || !context) return;
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (rect) {
-      context.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      context.stroke();
-    }
+
+    const { x, y } = getMousePos(e); // Gunakan fungsi perhitungan skala
+    context.lineTo(x, y);
+    context.stroke();
   };
 
   const stopDrawing = () => {
