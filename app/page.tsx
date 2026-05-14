@@ -55,16 +55,16 @@ export default function Landing() {
              Selamat datang di YumeKana! Latih kemampuan bahasa Jepangmu melalui quiz kana, latihan menulis, scanner huruf Jepang, serta library modern yang dirancang untuk membantu proses belajar menjadi lebih mudah dipahami. Mulailah langkah kecilmu hari ini dan wujudkan mimpi untuk belajar bahasa Jepang bersama YumeKana.
             </p>
             <div className="flex gap-3 md:gap-4 justify-center flex-wrap px-4">
-              <Link href="/dashboard">
+              <Link href="/latihan">
                 <Button size="lg" className="px-6 md:px-8 py-3 text-base md:text-lg hover:cursor-pointer">
                   Mulai Belajar
                 </Button>
               </Link>
-              <Link href="/library">
+              {/* <Link href="/library">
                 <Button variant="outline" size="lg" className="px-6 md:px-8 py-3 text-base md:text-lg">
                   Browse Library
                 </Button>
-              </Link>
+              </Link> */}
             </div>
 
             {/* Stats badges */}
