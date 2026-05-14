@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PenTool, RotateCcw, CheckCircle, XCircle, Zap } from 'lucide-react';
 import { SakuraDecoration } from '@/components/SakuraDecoration';
 import { hiraganaCharacters, katakanaCharacters, Character } from '@/data/characters';
+import { K49_LABEL_MAP } from '@/data/mapping';
 
 export default function Practice() {
   const [model, setModel] = useState<tf.GraphModel | null>(null);
@@ -103,21 +104,42 @@ export default function Practice() {
     if (!model || !canvasRef.current) return;
 
     // Preprocessing: Ambil data canvas
-    const imgData = tf.browser.fromPixels(canvasRef.current, 1); // Greyscale
-    const resized = tf.image.resizeBilinear(imgData, [28, 28]); // Sesuaikan ukuran input model Anda
-    const normalized = resized.div(255.0).expandDims(0);
+    const imgData = tf.browser.fromPixels(canvasRef.current, 1);
+    const resized = tf.image.resizeBilinear(imgData, [28, 28]);
+    const normalized = resized.div(255.0);
+    const inverted = tf.scalar(1.0).sub(normalized);
+
+    const debugData = await inverted.data();
+    console.log("Input yang dilihat model (sampel):", debugData.slice(0, 20));
+
+    const input = inverted.expandDims(0);
 
     // Prediksi
-    const prediction = model.predict(normalized) as tf.Tensor;
+    const prediction = model.predict(input) as tf.Tensor;
+    const probabilities = await prediction.data();
+    console.log("Probabilitas tiap kelas:", probabilities);
+
     const resultIndex = prediction.argMax(-1).dataSync()[0];
+    console.log("Indeks prediksi tertinggi:", resultIndex);
 
-    // Logika verifikasi
-    // Asumsi: Anda membandingkan indeks hasil model dengan karakter saat ini
-    const isCorrect = characters[currentCharIndex].id === `h${resultIndex + 1}`; // Sesuaikan logika ID Anda
+    const predictedChar = K49_LABEL_MAP[resultIndex];
 
+    const isCorrect = predictedChar === currentChar.character;
     setFeedback(isCorrect ? 'correct' : 'incorrect');
-    const score = await prediction.max().data(); // Mengambil nilai confidence tertinggi
-    setAccuracy(Math.round(score[0] * 100));
+
+    // Di dalam fungsi checkWriting
+    const confidenceScore = probabilities[resultIndex]; // misal 0.11
+
+    // Skalakan skor agar lebih masuk akal bagi pengguna
+    // Jika skor > 0.1 (10%), kita anggap itu sudah cukup yakin untuk model K49
+    let displayAccuracy = Math.min(Math.round((confidenceScore / 0.2) * 100), 100);
+
+    if (isCorrect) {
+      setAccuracy(displayAccuracy > 70 ? displayAccuracy : 85); // Beri minimal 85% jika jawaban benar
+    } else {
+      setAccuracy(Math.round(confidenceScore * 100));
+    }
+
     if (isCorrect) setXpEarned(prev => prev + 15);
 
     // Bersihkan tensor dari memori
@@ -176,6 +198,22 @@ export default function Practice() {
     setCurrentCharIndex((prev) => (prev + 1) % characters.length);
     clearCanvas();
   };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const preventDefault = (e: TouchEvent) => e.preventDefault();
+
+    // Memaksa listener menjadi TIDAK passive
+    canvas.addEventListener('touchstart', preventDefault, { passive: false });
+    canvas.addEventListener('touchmove', preventDefault, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('touchstart', preventDefault);
+      canvas.removeEventListener('touchmove', preventDefault);
+    };
+  }, []);
 
   return (
     <div className="p-8 relative">
