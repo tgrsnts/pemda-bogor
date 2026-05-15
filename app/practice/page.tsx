@@ -75,7 +75,7 @@ export default function Practice() {
   // 1. Load Model saat komponen pertama kali mounting
   useEffect(() => {
     async function load() {
-      const loadedModel = await tf.loadGraphModel('/tfjs_model/model.json');
+      const loadedModel = await tf.loadGraphModel('/etl_try_1/model.json');
       setModel(loadedModel as tf.GraphModel);
     }
     load();
