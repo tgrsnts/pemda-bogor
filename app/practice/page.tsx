@@ -132,7 +132,7 @@ export default function Practice() {
 
     // Preprocessing: Ambil data canvas
     const imgData = tf.browser.fromPixels(canvasRef.current, 1);
-    const resized = tf.image.resizeBilinear(imgData, [28, 28]);
+    const resized = tf.image.resizeBilinear(imgData, [69, 69]);
     const normalized = resized.div(255.0);
     const inverted = tf.scalar(1.0).sub(normalized);
 
