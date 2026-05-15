@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PenTool, RotateCcw, CheckCircle, XCircle, Zap } from 'lucide-react';
 import { SakuraDecoration } from '@/components/SakuraDecoration';
 import { hiraganaCharacters, katakanaCharacters, Character } from '@/data/characters';
-import { K49_LABEL_MAP } from '@/data/mapping';
+import { ETL8B_HIRAGANA_MAP } from '@/data/mapping';
+
 
 export default function Practice() {
   const [model, setModel] = useState<tf.GraphModel | null>(null);
@@ -148,8 +149,8 @@ export default function Practice() {
 
     const resultIndex = prediction.argMax(-1).dataSync()[0];
     console.log("Indeks prediksi tertinggi:", resultIndex);
-
-    const predictedChar = K49_LABEL_MAP[resultIndex];
+    
+    const predictedChar = ETL8B_HIRAGANA_MAP[resultIndex];
 
     const isCorrect = predictedChar === currentChar.character;
     setFeedback(isCorrect ? 'correct' : 'incorrect');
@@ -244,7 +245,7 @@ export default function Practice() {
         <div>
           <h1 className="mb-2">Latihan Menulis</h1>
           <p className="text-muted-foreground">Kuasai menulis karakter Hiragana dan Katakana dengan Yumekana!</p>
-        </div>        
+        </div>
       </div>
 
       <Tabs value={scriptType} onValueChange={(v) => setScriptType(v as 'hiragana' | 'katakana')} className="mb-6">
