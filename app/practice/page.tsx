@@ -131,12 +131,10 @@ export default function Practice() {
   const checkWriting = async () => {
     if (!model || !canvasRef.current) return;
 
-    // Sembunyikan panduan teks abu-abu (Hapus area background, sisakan goresan hitam)
+    if (!context) return;
+
     context.save();
     context.globalCompositeOperation = 'destination-out';
-    // Kita gunakan trik menghapus warna abu-abu muda sisa drawGuide jika ada
-    // Namun cara paling aman adalah memisahkan layer atau bersihkan canvas
-    context.restore();
 
     // Preprocessing: Ambil data canvas
     const imgData = tf.browser.fromPixels(canvasRef.current, 1);
