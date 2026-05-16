@@ -76,7 +76,7 @@ export default function Practice() {
   // 1. Load Model saat komponen pertama kali mounting
   useEffect(() => {
     async function load() {
-      const loadedModel = await tf.loadGraphModel('/etl_try_1/model.json');
+      const loadedModel = await tf.loadGraphModel('/etl_try_2/model.json');
       setModel(loadedModel as tf.GraphModel);
     }
     load();
@@ -131,15 +131,31 @@ export default function Practice() {
   const checkWriting = async () => {
     if (!model || !canvasRef.current) return;
 
+    // Sembunyikan panduan teks abu-abu (Hapus area background, sisakan goresan hitam)
+    context.save();
+    context.globalCompositeOperation = 'destination-out';
+    // Kita gunakan trik menghapus warna abu-abu muda sisa drawGuide jika ada
+    // Namun cara paling aman adalah memisahkan layer atau bersihkan canvas
+    context.restore();
+
     // Preprocessing: Ambil data canvas
     const imgData = tf.browser.fromPixels(canvasRef.current, 1);
     const resized = tf.image.resizeBilinear(imgData, [69, 69]);
     const normalized = resized.div(255.0);
-    const inverted = tf.scalar(1.0).sub(normalized);
+    const invertedBase = tf.scalar(1.0).sub(normalized);
+
+    const inverted = tf.tidy(() => {
+      return tf.where(
+        invertedBase.greater(tf.scalar(0.5)),
+        tf.onesLike(invertedBase),
+        tf.zerosLike(invertedBase)
+      );
+    });
 
     const debugData = await inverted.data();
-    console.log("Input yang dilihat model (sampel):", debugData.slice(0, 20));
+    console.log("Input biner yang dilihat model (sampel):", debugData.slice(0, 20));
 
+    // Tambah dimensi batch untuk input model [1, 69, 69, 1]
     const input = inverted.expandDims(0);
 
     // Prediksi
@@ -149,8 +165,21 @@ export default function Practice() {
 
     const resultIndex = prediction.argMax(-1).dataSync()[0];
     console.log("Indeks prediksi tertinggi:", resultIndex);
-    
+
     const predictedChar = ETL8B_HIRAGANA_MAP[resultIndex];
+
+    // =====================================================================
+    // KODE BARU: CETAK SELURUH INDEKS MODEL KE KONSOL BROWSER
+    // =====================================================================
+    console.log("--- DAFTAR INDEKS HURUF MODEL & PROBABILITAS ---");
+    Array.from(probabilities).forEach((prob, idx) => {
+      const charFromMap = ETL8B_HIRAGANA_MAP[idx] || "Tidak Diketahui";
+      // Cetak indeks, karakter di mapping, dan tingkat keyakinan model (dalam persen)
+      console.log(`Indeks [${idx}]: Kategori '${charFromMap}' -> Confidence: ${(prob * 100).toFixed(4)}%`);
+    });
+    console.log("------------------------------------------------");
+
+    console.log(`Hasil Tebakan Tertinggi: Indeks ${resultIndex} -> ${predictedChar}`);
 
     const isCorrect = predictedChar === currentChar.character;
     setFeedback(isCorrect ? 'correct' : 'incorrect');
