@@ -20,6 +20,7 @@ export default function Practice() {
   const [accuracy, setAccuracy] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const guideCanvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
   const characters = scriptType === 'hiragana' ? hiraganaCharacters : katakanaCharacters;
@@ -55,30 +56,16 @@ export default function Practice() {
   }, []);
 
   const drawGuide = (character: string) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
+    const guide = guideCanvasRef.current;
+    if (!guide) return;
+    const ctx = guide.getContext('2d')!;
+    ctx.clearRect(0, 0, guide.width, guide.height);
     ctx.globalAlpha = 0.25;
     ctx.fillStyle = '#E5E7EB';
-    ctx.font = `bold ${Math.floor(canvas.width * 0.7)}px sans-serif`;
+    ctx.font = `bold ${Math.floor(guide.width * 0.7)}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(character, canvas.width / 2, canvas.height / 2);
-    ctx.restore();
-    // Reset untuk goresan user
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 12;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    ctx.fillText(character, guide.width / 2, guide.height / 2);
   };
 
   // Init context + guide
@@ -205,7 +192,10 @@ export default function Practice() {
   };
 
   const clearCanvas = () => {
-    drawGuide(currentChar.character);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     setFeedback(null);
   };
 
@@ -257,18 +247,23 @@ export default function Practice() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 bg-gray-50">
+              <div className="relative border-2 border-dashed border-gray-300 rounded-xl p-4 bg-gray-50">
+                <canvas
+                  ref={guideCanvasRef}
+                  width={300}
+                  height={300}
+                  className="absolute inset-0 w-full max-w-sm mx-auto pointer-events-none"
+                />
                 <canvas
                   ref={canvasRef}
                   width={300}
                   height={300}
                   style={{ touchAction: 'none' }}
-                  className="w-full max-w-sm mx-auto border border-gray-200 rounded-lg cursor-crosshair bg-white"
+                  className="relative w-full max-w-sm mx-auto border border-gray-200 rounded-lg cursor-crosshair bg-transparent"
                   onMouseDown={startDrawing}
                   onMouseMove={draw}
                   onMouseUp={stopDrawing}
                   onMouseLeave={stopDrawing}
-                  // ✅ Touch sepenuhnya dihandle native listener di useEffect
                 />
               </div>
 
@@ -284,11 +279,10 @@ export default function Practice() {
               </div>
 
               {feedback && (
-                <div className={`p-4 rounded-xl text-center ${
-                  feedback === 'correct'
-                    ? 'bg-green-100 text-green-800 border-2 border-green-200'
-                    : 'bg-red-100 text-red-800 border-2 border-red-200'
-                }`}>
+                <div className={`p-4 rounded-xl text-center ${feedback === 'correct'
+                  ? 'bg-green-100 text-green-800 border-2 border-green-200'
+                  : 'bg-red-100 text-red-800 border-2 border-red-200'
+                  }`}>
                   <div className="flex items-center justify-center gap-2 mb-2">
                     {feedback === 'correct' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
                     <span className="font-bold">{feedback === 'correct' ? 'Bagus!' : 'Coba lagi!'}</span>
