@@ -59,7 +59,7 @@ export default function Practice() {
   // ─── Load model ──────────────────────────────────────────────────────────
 
   useEffect(() => {
-    tf.loadGraphModel('/etl_try_2/model.json').then((m) => setModel(m as tf.GraphModel));
+    tf.loadGraphModel('/etl_try_3/model.json').then((m) => setModel(m as tf.GraphModel));
   }, []);
 
   // ─── Gambar guide ke canvas tampil ───────────────────────────────────────
@@ -227,7 +227,7 @@ export default function Practice() {
 
     // strokeCanvas hanya berisi stroke pengguna — bebas guide
     const imgData = tf.browser.fromPixels(strokeCanvas, 1);
-    const resized = tf.image.resizeBilinear(imgData, [69, 69]);
+    const resized = tf.image.resizeBilinear(imgData, [28, 28]);
     const normalized = resized.div(255.0);
     const invertedBase = tf.scalar(1.0).sub(normalized);
 
