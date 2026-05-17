@@ -59,7 +59,7 @@ export default function Practice() {
   // ─── Load model ──────────────────────────────────────────────────────────
 
   useEffect(() => {
-    tf.loadGraphModel('/etl_try_4/model.json').then((m) => setModel(m as tf.GraphModel));
+    tf.loadGraphModel('/etl_try_5/model.json').then((m) => setModel(m as tf.GraphModel));
   }, []);
 
   // ─── Gambar guide ke canvas tampil ───────────────────────────────────────
