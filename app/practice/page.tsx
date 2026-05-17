@@ -15,16 +15,22 @@ export default function Practice() {
   const [model, setModel] = useState<tf.GraphModel | null>(null);
   const [scriptType, setScriptType] = useState<'hiragana' | 'katakana'>('hiragana');
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const isDrawingRef = useRef(false); // ✅ Pakai ref bukan state agar tidak trigger re-render
+  const isDrawingRef = useRef(false);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [accuracy, setAccuracy] = useState(0);
 
+  // Canvas tampil: guide + stroke pengguna (visible)
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const guideCanvasRef = useRef<HTMLCanvasElement>(null);
+  // Canvas hidden: HANYA stroke pengguna, tanpa guide (untuk prediksi)
+  const strokeCanvasRef = useRef<HTMLCanvasElement>(null);
+
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const strokeCtxRef = useRef<CanvasRenderingContext2D | null>(null);
 
   const characters = scriptType === 'hiragana' ? hiraganaCharacters : katakanaCharacters;
   const currentChar = characters[currentCharIndex];
+
+  // ─── Helpers posisi ───────────────────────────────────────────────────────
 
   const getMousePos = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -50,28 +56,40 @@ export default function Practice() {
     };
   };
 
-  // Load model
+  // ─── Load model ──────────────────────────────────────────────────────────
+
   useEffect(() => {
     tf.loadGraphModel('/etl_try_2/model.json').then((m) => setModel(m as tf.GraphModel));
   }, []);
 
-  const drawGuide = (character: string) => {
-    const guide = guideCanvasRef.current;
-    if (!guide) return;
-    const ctx = guide.getContext('2d')!;
-    ctx.clearRect(0, 0, guide.width, guide.height);
-    ctx.globalAlpha = 0.25;
-    ctx.fillStyle = '#E5E7EB';
-    ctx.font = `bold ${Math.floor(guide.width * 0.7)}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(character, guide.width / 2, guide.height / 2);
-  };
+  // ─── Gambar guide ke canvas tampil ───────────────────────────────────────
 
-  // Init context + guide
-  useEffect(() => {
+  const drawGuide = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    // Hanya hapus area guide (full clear), lalu gambar ulang guide
+    // Stroke pengguna TIDAK di-clear di sini — drawGuide hanya dipanggil
+    // saat karakter berganti (via useEffect) yang juga clear stroke canvas.
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.globalAlpha = 0.25;
+    ctx.fillStyle = '#E5E7EB';
+    ctx.font = `bold ${Math.floor(canvas.width * 0.7)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(currentChar.character, canvas.width / 2, canvas.height / 2);
+    ctx.restore();
+  };
+
+  // ─── Init context + guide setiap ganti karakter/script ───────────────────
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const strokeCanvas = strokeCanvasRef.current;
+    if (!canvas || !strokeCanvas) return;
+
+    // Setup ctx tampil
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
     ctx.lineCap = 'round';
@@ -79,39 +97,71 @@ export default function Practice() {
     ctx.lineWidth = 12;
     ctx.strokeStyle = '#000000';
     ctxRef.current = ctx;
-    drawGuide(currentChar.character);
+
+    // Setup ctx stroke-only (hidden)
+    const strokeCtx = strokeCanvas.getContext('2d', { willReadFrequently: true });
+    if (!strokeCtx) return;
+    strokeCtx.lineCap = 'round';
+    strokeCtx.lineJoin = 'round';
+    strokeCtx.lineWidth = 12;
+    strokeCtx.strokeStyle = '#000000';
+    strokeCtxRef.current = strokeCtx;
+
+    // Fill putih sebagai background permanen stroke canvas
+    strokeCtx.fillStyle = '#FFFFFF';
+    strokeCtx.fillRect(0, 0, strokeCanvas.width, strokeCanvas.height);
+
+    // Gambar guide ke canvas tampil
+    drawGuide();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCharIndex, scriptType]);
 
-  // ✅ Blokir scroll touch via native listener dengan passive: false
+  // ─── Touch events (passive: false agar e.preventDefault() berfungsi) ─────
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const onTouchStart = (e: TouchEvent) => {
       const ctx = ctxRef.current;
-      if (!ctx) return;
+      const strokeCtx = strokeCtxRef.current;
+      if (!ctx || !strokeCtx) return;
       isDrawingRef.current = true;
       const { x, y } = getTouchPos(e.touches[0]);
+
+      // Canvas tampil
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = '#000000';
       ctx.beginPath();
       ctx.moveTo(x, y);
+
+      // Canvas stroke-only
+      strokeCtx.globalAlpha = 1;
+      strokeCtx.globalCompositeOperation = 'source-over';
+      strokeCtx.strokeStyle = '#000000';
+      strokeCtx.beginPath();
+      strokeCtx.moveTo(x, y);
     };
 
     const onTouchMove = (e: TouchEvent) => {
-      e.preventDefault(); // ✅ Berfungsi karena { passive: false }
+      e.preventDefault();
       const ctx = ctxRef.current;
-      if (!isDrawingRef.current || !ctx) return;
+      const strokeCtx = strokeCtxRef.current;
+      if (!isDrawingRef.current || !ctx || !strokeCtx) return;
       const { x, y } = getTouchPos(e.touches[0]);
+
       ctx.lineTo(x, y);
       ctx.stroke();
+
+      strokeCtx.lineTo(x, y);
+      strokeCtx.stroke();
     };
 
     const onTouchEnd = () => {
       isDrawingRef.current = false;
       ctxRef.current?.closePath();
+      strokeCtxRef.current?.closePath();
     };
 
     canvas.addEventListener('touchstart', onTouchStart, { passive: false });
@@ -126,37 +176,57 @@ export default function Practice() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Mouse handlers
+  // ─── Mouse handlers ───────────────────────────────────────────────────────
+
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const ctx = ctxRef.current;
-    if (!ctx) return;
+    const strokeCtx = strokeCtxRef.current;
+    if (!ctx || !strokeCtx) return;
+
+    isDrawingRef.current = true;
+    const { x, y } = getMousePos(e);
+
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = '#000000';
-    isDrawingRef.current = true;
-    const { x, y } = getMousePos(e);
     ctx.beginPath();
     ctx.moveTo(x, y);
+
+    strokeCtx.globalAlpha = 1;
+    strokeCtx.globalCompositeOperation = 'source-over';
+    strokeCtx.strokeStyle = '#000000';
+    strokeCtx.beginPath();
+    strokeCtx.moveTo(x, y);
   };
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const ctx = ctxRef.current;
-    if (!isDrawingRef.current || !ctx) return;
+    const strokeCtx = strokeCtxRef.current;
+    if (!isDrawingRef.current || !ctx || !strokeCtx) return;
+
     const { x, y } = getMousePos(e);
+
     ctx.lineTo(x, y);
     ctx.stroke();
+
+    strokeCtx.lineTo(x, y);
+    strokeCtx.stroke();
   };
 
   const stopDrawing = () => {
     isDrawingRef.current = false;
     ctxRef.current?.closePath();
+    strokeCtxRef.current?.closePath();
   };
 
-  const checkWriting = async () => {
-    const canvas = canvasRef.current;
-    if (!model || !canvas) return;
+  // ─── Prediksi: baca dari strokeCanvas (tanpa guide) ──────────────────────
 
-    const imgData = tf.browser.fromPixels(canvas, 1);
+  const checkWriting = async () => {
+    const strokeCanvas = strokeCanvasRef.current;
+    if (!model || !strokeCanvas) return;
+
+    // strokeCanvas hanya berisi stroke pengguna — bebas guide
+    const imgData = tf.browser.fromPixels(strokeCanvas, 1);
     const resized = tf.image.resizeBilinear(imgData, [69, 69]);
     const normalized = resized.div(255.0);
     const invertedBase = tf.scalar(1.0).sub(normalized);
@@ -191,11 +261,21 @@ export default function Practice() {
     prediction.dispose();
   };
 
+  // ─── Clear: hapus stroke di kedua canvas, gambar ulang guide ─────────────
+
   const clearCanvas = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d')!;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const strokeCanvas = strokeCanvasRef.current;
+    if (!canvas || !strokeCanvas) return;
+
+    // Reset stroke canvas ke background putih
+    const strokeCtx = strokeCanvas.getContext('2d')!;
+    strokeCtx.fillStyle = '#FFFFFF';
+    strokeCtx.fillRect(0, 0, strokeCanvas.width, strokeCanvas.height);
+
+    // Clear canvas tampil lalu gambar ulang guide
+    drawGuide();
+
     setFeedback(null);
   };
 
@@ -203,6 +283,8 @@ export default function Practice() {
     setCurrentCharIndex((prev) => (prev + 1) % characters.length);
     setFeedback(null);
   };
+
+  // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
     <div className="p-4 md:p-8 relative">
@@ -248,12 +330,14 @@ export default function Practice() {
           <CardContent>
             <div className="space-y-4">
               <div className="relative border-2 border-dashed border-gray-300 rounded-xl p-4 bg-gray-50">
+                {/* Canvas tersembunyi — hanya stroke pengguna, dipakai untuk prediksi */}
                 <canvas
-                  ref={guideCanvasRef}
+                  ref={strokeCanvasRef}
                   width={300}
                   height={300}
-                  className="absolute inset-0 w-full max-w-sm mx-auto pointer-events-none"
+                  className="hidden"
                 />
+                {/* Canvas tampil — guide + stroke pengguna */}
                 <canvas
                   ref={canvasRef}
                   width={300}
