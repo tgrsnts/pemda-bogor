@@ -14,7 +14,10 @@ import { ETL8B_HIRAGANA_MAP, KATAKANA_MAP } from '@/data/mapping';
 export default function Practice() {
   const [hiraganaModel, setHiraganaModel] = useState<tf.GraphModel | null>(null);
   const [katakanaModel, setKatakanaModel] = useState<tf.GraphModel | null>(null);
-  const [scriptType, setScriptType] = useState<'hiragana' | 'katakana'>('hiragana');
+  const [scriptType, setScriptType] = useState<'hiragana' | 'katakana'>(() => {
+    const saved = localStorage.getItem('selectedScript');
+    return (saved === 'katakana' ? 'katakana' : 'hiragana');
+  });
   const model = scriptType === 'hiragana' ? hiraganaModel : katakanaModel;
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const isDrawingRef = useRef(false);

@@ -46,8 +46,8 @@ export default function PracticeSelection() {
 
   const handleStart = () => {
     if (selectedScript) {
-      // Pass state to the practice page
-      router.push(`/practice?script=${selectedScript}`);
+      localStorage.setItem('selectedScript', selectedScript);
+      router.push('/practice');
     }
   };
 
@@ -82,8 +82,8 @@ export default function PracticeSelection() {
               <Card
                 key={script.id}
                 className={`cursor-pointer transition-all hover:shadow-xl ${selectedScript === script.id
-                    ? 'ring-2 ring-primary shadow-lg'
-                    : 'hover:shadow-lg'
+                  ? 'ring-2 ring-primary shadow-lg'
+                  : 'hover:shadow-lg'
                   }`}
                 onClick={() => setSelectedScript(script.id as any)}
               >
