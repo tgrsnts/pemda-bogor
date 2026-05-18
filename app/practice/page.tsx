@@ -9,11 +9,13 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RotateCcw, CheckCircle, XCircle } from 'lucide-react';
 import { SakuraDecoration } from '@/components/SakuraDecoration';
 import { hiraganaCharacters, katakanaCharacters } from '@/data/characters';
-import { ETL8B_HIRAGANA_MAP } from '@/data/mapping';
+import { ETL8B_HIRAGANA_MAP, KATAKANA_MAP } from '@/data/mapping';
 
 export default function Practice() {
-  const [model, setModel] = useState<tf.GraphModel | null>(null);
+  const [hiraganaModel, setHiraganaModel] = useState<tf.GraphModel | null>(null);
+  const [katakanaModel, setKatakanaModel] = useState<tf.GraphModel | null>(null);
   const [scriptType, setScriptType] = useState<'hiragana' | 'katakana'>('hiragana');
+  const model = scriptType === 'hiragana' ? hiraganaModel : katakanaModel;
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const isDrawingRef = useRef(false);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
@@ -59,7 +61,8 @@ export default function Practice() {
   // ─── Load model ──────────────────────────────────────────────────────────
 
   useEffect(() => {
-    tf.loadGraphModel('/etl_try_5/model.json').then((m) => setModel(m as tf.GraphModel));
+    tf.loadGraphModel('/etl_try_5/model.json').then((m) => setHiraganaModel(m as tf.GraphModel));
+    tf.loadGraphModel('/katakana_model/model.json').then((m) => setKatakanaModel(m as tf.GraphModel));
   }, []);
 
   // ─── Gambar guide ke canvas tampil ───────────────────────────────────────
@@ -243,7 +246,8 @@ export default function Practice() {
     const prediction = model.predict(input) as tf.Tensor;
     const probabilities = await prediction.data();
     const resultIndex = prediction.argMax(-1).dataSync()[0];
-    const predictedChar = ETL8B_HIRAGANA_MAP[resultIndex];
+    const map = scriptType === 'hiragana' ? ETL8B_HIRAGANA_MAP : KATAKANA_MAP;
+    const predictedChar = map[resultIndex];
     const confidenceScore = probabilities[resultIndex];
 
     console.log(`Prediksi: ${predictedChar} (confidence: ${(confidenceScore * 100).toFixed(2)}%)`);
