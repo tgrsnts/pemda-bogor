@@ -15,8 +15,9 @@ export default function Practice() {
   const [hiraganaModel, setHiraganaModel] = useState<tf.GraphModel | null>(null);
   const [katakanaModel, setKatakanaModel] = useState<tf.GraphModel | null>(null);
   const [scriptType, setScriptType] = useState<'hiragana' | 'katakana'>(() => {
+    if (typeof window === 'undefined') return 'hiragana';
     const saved = localStorage.getItem('selectedScript');
-    return (saved === 'katakana' ? 'katakana' : 'hiragana');
+    return saved === 'katakana' ? 'katakana' : 'hiragana';
   });
   const model = scriptType === 'hiragana' ? hiraganaModel : katakanaModel;
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
