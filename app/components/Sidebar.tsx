@@ -16,8 +16,8 @@ import { useState } from 'react';
 const navItems = [
   // { href: '/dashboard', icon: Home, label: 'Dashboard' },
   { href: '/latihan', icon: PenTool, label: 'Latihan' },
-  { href: '/pindai', icon: ScanLine, label: 'Pindai' },
-  { href: '/kuis', icon: Brain, label: 'Kuis' },
+  // { href: '/pindai', icon: ScanLine, label: 'Pindai' },
+  // { href: '/kuis', icon: Brain, label: 'Kuis' },
   { href: '/kamus', icon: BookOpen, label: 'Kamus' },
   // { href: '/profile', icon: User, label: 'Profile' },
 ];
