@@ -288,9 +288,17 @@ export default function Practice() {
   };
 
   const nextCharacter = () => {
-    setCurrentCharIndex((prev) => (prev + 1) % characters.length);
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    setCurrentCharIndex(randomIndex);
     setFeedback(null);
+    clearCanvas();
   };
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    setCurrentCharIndex(randomIndex);
+    setFeedback(null);
+  }, [scriptType]);
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
@@ -375,11 +383,10 @@ export default function Practice() {
                   ? 'bg-green-100 text-green-800 border-2 border-green-200'
                   : 'bg-red-100 text-red-800 border-2 border-red-200'
                   }`}>
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2">
                     {feedback === 'correct' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-                    <span className="font-bold">{feedback === 'correct' ? 'Bagus!' : 'Coba lagi!'}</span>
-                  </div>
-                  <div className="text-sm">Akurasi: {accuracy}%</div>
+                    <span className="font-bold">{feedback === 'correct' ? 'Benar!' : 'Coba lagi!'}</span>
+                  </div>                  
                 </div>
               )}
 
