@@ -10,17 +10,27 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const pathname = usePathname();
-  const hideSidebarAndTopBar = pathname === '/' || pathname === '/auth';
+  const hiddenRoutes = [
+    '/',
+    '/auth',
+    '/practice'
+  ];
+
+  const hideSidebarAndTopBar = hiddenRoutes.includes(pathname);
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-background overflow-hidden">
+
       {!hideSidebarAndTopBar && <Sidebar />}
-      {/* Main Content */}
+
       <div className="flex-1 flex flex-col overflow-hidden w-full">
-        {/* {!hideSidebarAndTopBar && <TopBar />} */}
+
+        {!hideSidebarAndTopBar && <TopBar />}
+
         <main className="flex-1 overflow-auto">
           {children}
         </main>
+
       </div>
     </div>
   );
