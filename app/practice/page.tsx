@@ -523,7 +523,7 @@ export default function Practice() {
             </div>
 
             {/* Hint toggle — desktop only */}
-            <button
+            {/* <button
               className="hidden lg:flex"
               onClick={() => setShowCharHint((p) => !p)}
               style={{
@@ -537,7 +537,7 @@ export default function Practice() {
             >
               <Sparkles size={13} />
               {showCharHint ? 'Sembunyikan panduan' : 'Tampilkan panduan'}
-            </button>
+            </button> */}
 
             {showCharHint && (
               <div
@@ -674,7 +674,7 @@ export default function Practice() {
                       transition: 'opacity 0.3s',
                     }}
                   >
-                    Mulai menulis di sini ✍️
+                    Mulai menulis di sini 
                   </div>
                 )}
               </div>
