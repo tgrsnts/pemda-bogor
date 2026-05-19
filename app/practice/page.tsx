@@ -42,6 +42,7 @@ export default function Practice() {
   });
   const model = scriptType === 'hiragana' ? hiraganaModel : katakanaModel;
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [unvisitedIndices, setUnvisitedIndices] = useState<number[]>([]);
   const isDrawingRef = useRef(false);
   const [feedback, setFeedback] = useState<FeedbackType>(null);
   const [accuracy, setAccuracy] = useState(0);
@@ -265,9 +266,33 @@ export default function Practice() {
   };
 
   const nextCharacter = () => {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    setCurrentCharIndex(randomIndex);
     setShowCharHint(false);
+    setFeedback(null);
+
+    let currentPool = [...unvisitedIndices];
+
+    // Jika pool habis, reset kembali seluruh indeks karakter yang tersedia
+    if (currentPool.length === 0) {
+      currentPool = Array.from({ length: characters.length }, (_, i) => i);
+      // Agar karakter pertama di ronde baru tidak sama dengan karakter terakhir di ronde lalu
+      currentPool = currentPool.filter(idx => idx !== currentCharIndex);
+
+      // Fallback darurat jika hanya ada 1 karakter di dataset (opsional)
+      if (currentPool.length === 0) {
+        currentPool = Array.from({ length: characters.length }, (_, i) => i);
+      }
+    }
+
+    // Ambil indeks secara acak dari pool yang tersisa
+    const randomPoolIndex = Math.floor(Math.random() * currentPool.length);
+    const nextCharIndex = currentPool[randomPoolIndex];
+
+    // Hapus karakter yang terpilih dari pool
+    currentPool.splice(randomPoolIndex, 1);
+
+    // Update state
+    setCurrentCharIndex(nextCharIndex);
+    setUnvisitedIndices(currentPool);
   };
 
   useEffect(() => {
@@ -275,6 +300,23 @@ export default function Practice() {
     setCurrentCharIndex(randomIndex);
     setFeedback(null);
   }, [scriptType]);
+
+  useEffect(() => {
+    // Buat pool indeks [0, 1, 2, ..., characters.length - 1]
+    const initialPool = Array.from({ length: characters.length }, (_, i) => i);
+
+    // Ambil satu indeks acak pertama secara instan
+    const firstRandomPoolIndex = Math.floor(Math.random() * initialPool.length);
+    const firstCharIndex = initialPool[firstRandomPoolIndex];
+
+    // Hapus indeks terpilih dari pool
+    initialPool.splice(firstRandomPoolIndex, 1);
+
+    // Set state
+    setCurrentCharIndex(firstCharIndex);
+    setUnvisitedIndices(initialPool);
+    setFeedback(null);
+  }, [scriptType]); // characters otomatis ikut berubah saat scriptType berubah
 
   // ─── Render ────────────────────────────────────────────────────────────────
 
@@ -588,8 +630,8 @@ export default function Practice() {
                   boxShadow: feedback === 'correct'
                     ? '0 0 0 3px #34d399, 0 20px 60px rgba(52,211,153,0.2)'
                     : feedback === 'incorrect'
-                    ? '0 0 0 3px #f87171, 0 20px 60px rgba(248,113,113,0.15)'
-                    : '0 8px 40px rgba(230, 57, 70,0.12), 0 2px 8px rgba(0,0,0,0.06)',
+                      ? '0 0 0 3px #f87171, 0 20px 60px rgba(248,113,113,0.15)'
+                      : '0 8px 40px rgba(230, 57, 70,0.12), 0 2px 8px rgba(0,0,0,0.06)',
                   transition: 'box-shadow 0.4s ease',
                   background: '#fff',
                 }}
@@ -674,7 +716,7 @@ export default function Practice() {
                       transition: 'opacity 0.3s',
                     }}
                   >
-                    Mulai menulis di sini 
+                    Mulai menulis di sini
                   </div>
                 )}
               </div>
@@ -705,10 +747,10 @@ export default function Practice() {
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(230, 57, 70,0.1)';                  
+                  e.currentTarget.style.background = 'rgba(230, 57, 70,0.1)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.9)';                
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
                 }}
               >
                 <RotateCcw size={16} />
