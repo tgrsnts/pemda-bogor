@@ -658,7 +658,7 @@ export default function Practice() {
                     }}
                   >
                     {feedback === 'correct'
-                      ? <><CheckCircle size={14} /> Benar!%</>
+                      ? <><CheckCircle size={14} /> Benar!</>
                       : <><XCircle size={14} /> Coba lagi</>
                     }
                   </div>
