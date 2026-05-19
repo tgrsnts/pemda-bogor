@@ -330,7 +330,7 @@ export default function Practice() {
       <div
         style={{
           position: 'fixed', inset: 0,
-          width: '100vw', height: '100vh',
+          width: '100vw', height: '100dvh',
           overflow: 'hidden',
           background: 'linear-gradient(135deg, #fdf4ff 0%, #FFF5F5 40%, #f0f9ff 100%)',
           display: 'flex',
@@ -658,7 +658,7 @@ export default function Practice() {
                     }}
                   >
                     {feedback === 'correct'
-                      ? <><CheckCircle size={14} /> Benar! {accuracy}%</>
+                      ? <><CheckCircle size={14} /> Benar!%</>
                       : <><XCircle size={14} /> Coba lagi</>
                     }
                   </div>
