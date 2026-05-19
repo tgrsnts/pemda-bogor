@@ -25,7 +25,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
       <div className="flex-1 flex flex-col overflow-hidden w-full">
 
-        {!hideSidebarAndTopBar && <TopBar />}
+        {/* {!hideSidebarAndTopBar && <TopBar />} */}
 
         <main className="flex-1 overflow-auto">
           {children}

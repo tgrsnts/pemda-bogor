@@ -19,15 +19,11 @@ export function LandingNavbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/landing" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="text-3xl">🏯</div>
-            <div>
-              <div className="text-xl font-bold text-primary">日本語</div>
-              <div className="text-xs text-muted-foreground leading-none">Learn Japanese</div>
-            </div>
+            <img className='w-24' src="/Jingga Merah Muda Imut Lucu Restoran Jepang Logo.png" alt="" />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <a
                 key={link.to}
@@ -37,29 +33,24 @@ export function LandingNavbar() {
                 {link.label}
               </a>
             ))}
-          </div>
+          </div> */}
 
           {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/auth">
-              <Button variant="outline" className="rounded-xl">
-                Login
-              </Button>
-            </Link>
-            <Link href="/auth">
+          <div className="hidden md:flex items-center gap-3">            
+            <Link href="/latihan">
               <Button className="rounded-xl">
-                Get Started
+                Mulai
               </Button>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
+          {/* <button
             className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          </button> */}
         </div>
 
         {/* Mobile Menu */}

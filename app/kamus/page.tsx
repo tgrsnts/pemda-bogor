@@ -59,7 +59,7 @@ export default function Library() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search characters..."
+                placeholder="Cari karakter..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-secondary focus:border-primary focus:outline-none transition-colors"
@@ -67,12 +67,31 @@ export default function Library() {
             </div>
           </div>
 
-          <Tabs value={selectedScript} onValueChange={(v) => setSelectedScript(v as 'hiragana' | 'katakana')}>
-            <TabsList className="bg-white shadow-md p-1 rounded-2xl">
-              <TabsTrigger value="hiragana" className="rounded-xl">Hiragana ひらがな</TabsTrigger>
-              <TabsTrigger value="katakana" className="rounded-xl">Katakana カタカナ</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div
+            style={{
+              display: 'flex', gap: 4,
+              background: 'rgba(230, 57, 70,0.1)',
+              borderRadius: 14, padding: 4,
+            }}
+            className='w-fit'
+          >
+            {(['hiragana', 'katakana'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSelectedScript(s)}
+                style={{
+                  padding: '5px 14px', borderRadius: 10, fontSize: 13,
+                  fontWeight: 600, border: 'none', cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  background: selectedScript === s ? '#E63946' : 'transparent',
+                  color: selectedScript === s ? '#fff' : '#E63946',
+                  boxShadow: selectedScript === s ? '0 2px 8px rgba(230, 57, 70,0.3)' : 'none',
+                }}
+              >
+                {s === 'hiragana' ? <span>ひ <span className="hidden md:inline">Hiragana</span></span> : <span>ア <span className="hidden md:inline">Katakana</span></span>}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Character Grid */}
