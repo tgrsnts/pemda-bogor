@@ -432,7 +432,7 @@ export default function Practice() {
                   boxShadow: scriptType === s ? '0 2px 8px rgba(230, 57, 70,0.3)' : 'none',
                 }}
               >
-                {s === 'hiragana' ? 'ひ Hiragana' : 'ア Katakana'}
+                {s === 'hiragana' ? <span>ひ <span className="hidden md:inline">Hiragana</span></span> : <span>ア <span className="hidden md:inline">Katakana</span></span>}
               </button>
             ))}
           </div>
