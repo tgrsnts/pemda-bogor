@@ -33,15 +33,15 @@ export default function PracticeSelection() {
       icon: '🔠',
       color: 'from-purple-400 to-indigo-400',
     },
-    {
-      id: 'mixed',
-      title: 'Campuran',
-      subtitle: 'ひらがな・カタカナ',
-      description: 'Latih Hiragana dan Katakana secara bersamaan',
-      characters: '96 karakter',
-      icon: '🎌',
-      color: 'from-orange-400 to-amber-400',
-    },
+    // {
+    //   id: 'mixed',
+    //   title: 'Campuran',
+    //   subtitle: 'ひらがな・カタカナ',
+    //   description: 'Latih Hiragana dan Katakana secara bersamaan',
+    //   characters: '96 karakter',
+    //   icon: '🎌',
+    //   color: 'from-orange-400 to-amber-400',
+    // },
   ];
 
   const handleStart = () => {
