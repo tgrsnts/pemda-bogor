@@ -44,9 +44,9 @@ export function Sidebar() {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className=" border-b border-sidebar-border">
-          <div className="flex justify-center items-center gap-3">
+          <a href="/" className="flex justify-center items-center gap-3">
             <img className='w-36' src="/Jingga Merah Muda Imut Lucu Restoran Jepang Logo.png" alt="" />
-          </div>
+          </a>
         </div>
         <nav className="flex-1 px-3 md:px-4 py-4 md:py-6 overflow-y-auto">
           {navItems.map((item) => {
@@ -85,9 +85,9 @@ export function Sidebar() {
         >
           <Menu className="w-6 h-6" />
         </button>
-        <div className="flex items-center gap-2">
+        <a href="/" className="flex items-center gap-2">
          <img className='w-16' src="/Jingga Merah Muda Imut Lucu Restoran Jepang Logo.png" alt="" />
-        </div>
+        </a>
       </div>
     </>
   );
