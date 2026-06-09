@@ -128,32 +128,7 @@ export default function Library() {
               </CardContent>
             </Card>
           ))}
-        </div>
-
-        {/* Stats */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-r from-blue-50 to-cyan-50">
-            <CardContent className="p-6 text-center">
-              <BookOpen className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-              <div className="text-2xl font-bold text-blue-600">{characters.length}</div>
-              <div className="text-sm text-muted-foreground">Total Characters</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-r from-green-50 to-emerald-50">
-            <CardContent className="p-6 text-center">
-              <Star className="w-8 h-8 mx-auto mb-2 text-green-600" />
-              <div className="text-2xl font-bold text-green-600">5</div>
-              <div className="text-sm text-muted-foreground">Learned</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-r from-purple-50 to-indigo-50">
-            <CardContent className="p-6 text-center">
-              <Trophy className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-              <div className="text-2xl font-bold text-purple-600">85%</div>
-              <div className="text-sm text-muted-foreground">Mastery</div>
-            </CardContent>
-          </Card>
-        </div>
+        </div>    
       </div>
     </div>
   );
